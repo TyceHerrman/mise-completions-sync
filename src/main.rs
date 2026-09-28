@@ -36,10 +36,6 @@ struct Cli {
     #[arg(value_name = "TOOL")]
     tools: Vec<String>,
 
-    /// Include registry children provided by explicitly named tools
-    #[arg(long, requires = "tools")]
-    children: bool,
-
     /// Only sync completions for newly installed/updated tools (reads MISE_INSTALLED_TOOLS env var)
     #[arg(long, conflicts_with_all = ["tools", "global", "local", "current"])]
     new_only: bool,
@@ -111,14 +107,7 @@ fn run() -> Result<(), sync::Error> {
             let shells = cli
                 .shell
                 .unwrap_or_else(|| vec!["zsh".to_string(), "bash".to_string(), "fish".to_string()]);
-            sync::sync_completions(
-                &dirs,
-                &shells,
-                &cli.tools,
-                flags,
-                cli.new_only,
-                cli.children,
-            )
+            sync::sync_completions(&dirs, &shells, &cli.tools, flags, cli.new_only)
         }
     }
 }
@@ -185,17 +174,7 @@ mod tests {
         assert!(!cli.global);
         assert!(!cli.local);
         assert!(!cli.current);
-        assert!(!cli.children);
         assert!(cli.tools.is_empty());
-    }
-
-    #[test]
-    fn test_children_requires_specific_tools() {
-        let cli = parse(&["misecompsync", "--children", "uv"]).unwrap();
-        assert!(cli.children);
-        assert_eq!(cli.tools, ["uv"]);
-
-        assert!(parse(&["misecompsync", "--children"]).is_err());
     }
 
     #[test]

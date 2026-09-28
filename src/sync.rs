@@ -357,15 +357,13 @@ fn installed_sync_targets(
 fn specific_sync_targets(
     registry: &registry::Registry,
     specific_tools: &[String],
-    include_children: bool,
 ) -> Vec<SyncTarget> {
     let is_requested = |tool_name: &str| specific_tools.iter().any(|tool| tool == tool_name);
     let mut targets: Vec<_> = registry
         .tools
         .iter()
         .filter(|(tool_name, entry)| {
-            is_requested(tool_name)
-                || (include_children && entry.provided_by.as_deref().is_some_and(is_requested))
+            is_requested(tool_name) || entry.provided_by.as_deref().is_some_and(is_requested)
         })
         .map(|(tool_name, entry)| SyncTarget {
             tool_name: tool_name.clone(),
@@ -525,7 +523,6 @@ pub fn sync_completions(
     specific_tools: &[String],
     flags: MiseLsFlags,
     new_only: bool,
-    include_children: bool,
 ) -> Result<(), Error> {
     let registry = registry::load_registry()?;
 
@@ -540,7 +537,7 @@ pub fn sync_completions(
         };
         installed_sync_targets(&registry, &tools_map)
     } else {
-        specific_sync_targets(&registry, specific_tools, include_children)
+        specific_sync_targets(&registry, specific_tools)
     };
 
     if tools_in_registry.is_empty() {
@@ -1103,16 +1100,22 @@ mod tests {
     }
 
     #[test]
-    fn test_specific_sync_targets_do_not_expand_provider_by_default() {
+    fn test_specific_sync_targets_naming_a_companion_selects_only_it() {
         let registry = registry_with_provider();
 
         assert_eq!(
-            specific_sync_targets(&registry, &["uvx".to_string(), "uvx".to_string()], false,),
+            specific_sync_targets(&registry, &["uvx".to_string(), "uvx".to_string()]),
             expected_targets(&[("uvx", "uv")])
         );
+    }
+
+    #[test]
+    fn test_specific_sync_targets_naming_a_provider_includes_its_companions() {
+        let registry = registry_with_provider();
+
         assert_eq!(
-            specific_sync_targets(&registry, &["uv".to_string()], false),
-            expected_targets(&[("uv", "uv")])
+            specific_sync_targets(&registry, &["uv".to_string()]),
+            expected_targets(&[("uv", "uv"), ("uvx", "uv")])
         );
     }
 
@@ -1124,12 +1127,12 @@ mod tests {
             .insert("uv-tool".to_string(), test_tool_entry(Some("uvx")));
 
         assert_eq!(
-            specific_sync_targets(&registry, &["uv".to_string()], true),
+            specific_sync_targets(&registry, &["uv".to_string()]),
             expected_targets(&[("uv", "uv"), ("uvx", "uv")])
         );
 
         assert_eq!(
-            specific_sync_targets(&registry, &["uvx".to_string()], true),
+            specific_sync_targets(&registry, &["uvx".to_string()]),
             expected_targets(&[("uv-tool", "uvx"), ("uvx", "uv")])
         );
     }
@@ -1145,7 +1148,6 @@ mod tests {
             specific_sync_targets(
                 &registry,
                 &["uvx".to_string(), "uv".to_string(), "uv".to_string()],
-                true,
             ),
             expected_targets(&[("uv", "uv"), ("uv-tool", "uvx"), ("uvx", "uv")])
         );
@@ -1158,7 +1160,7 @@ mod tests {
         };
 
         assert_eq!(
-            specific_sync_targets(&registry, &["uv".to_string()], true),
+            specific_sync_targets(&registry, &["uv".to_string()]),
             expected_targets(&[("uvx", "uv")])
         );
     }

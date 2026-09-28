@@ -64,8 +64,8 @@ misecompsync --shell zsh
 # Sync specific tools
 misecompsync kubectl helm
 
-# Sync a tool and its direct companion binaries
-misecompsync --children uv
+# Sync a tool and the companion commands it installs (uv and uvx)
+misecompsync uv
 
 # List supported tools
 misecompsync list
@@ -99,14 +99,14 @@ misecompsync --current  # or -c
 
 ### Companion binaries
 
-By default, explicitly named tools are parent-only: `misecompsync uv` syncs
-only `uv`. Use `misecompsync --children uv` to also sync direct companion
-binaries that the registry identifies as provided by `uv`. Expansion is
-downward and one hop only. With multiple explicit tools, misecompsync syncs
-the sorted, deduplicated union of those tools and their direct children.
+Some mise tools install more than one command. Naming the tool syncs every
+command it provides: `misecompsync uv` syncs `uv` and `uvx`, and
+`misecompsync trash-cli` syncs `trash`, `trash-put` and the rest. Naming a
+companion command syncs only that command, so `misecompsync uvx` leaves `uv`
+alone.
 
-Automatic sync and `--new-only` are unchanged: they include a companion binary
-when its provider is installed.
+Automatic sync and `--new-only` work the same way: a companion command is
+included whenever the tool that provides it is installed.
 
 ### Automatic sync
 
