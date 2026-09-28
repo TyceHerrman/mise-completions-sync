@@ -130,8 +130,10 @@ The following tools have shell completion support in mise-completions-sync.
 | [yazi](https://github.com/sxyazi/yazi) | Blazing fast terminal file manager written in R... | ✓ | ✓ | ✓ |
 | [yq](https://github.com/mikefarah/yq) | yq is a portable command-line YAML processor | ✓ | ✓ | ✓ |
 | [zellij](https://github.com/zellij-org/zellij) | A terminal workspace with batteries included | ✓ | ✓ | ✓ |
+| [zoxide](https://github.com/ajeetdsouza/zoxide) | A smarter cd command. Supports all major shells | ✓ | ✓ | ✓ |
+| zshellcheck |  | ✓ | ✓ |  |
 
-**Total: 126 tools**
+**Total: 128 tools**
 
 ## Shell Support Legend
 
