@@ -12,6 +12,7 @@ The following tools have shell completion support in mise-completions-sync.
 | bun | Bun is a fast JavaScript all-in-one toolkit | ✓ | ✓ | ✓ |
 | cargo |  | ✓ | ✓ | ✓ |
 | [chezmoi](https://github.com/twpayne/chezmoi) | Manage your dotfiles across multiple diverse ma... | ✓ | ✓ | ✓ |
+| [cilium-hubble](https://github.com/cilium/hubble) | Hubble - Network, Service & Security Observabil... | ✓ | ✓ | ✓ |
 | [clusterctl](https://github.com/kubernetes-sigs/cluster-api) | Home for Cluster API, a subproject of sig-clust... | ✓ | ✓ | ✓ |
 | [cmctl](https://github.com/cert-manager/cmctl) | the command line utility that makes cert-manage... | ✓ | ✓ | ✓ |
 | [cosign](https://github.com/sigstore/cosign) | Code signing and transparency for containers an... | ✓ | ✓ | ✓ |
@@ -30,6 +31,7 @@ The following tools have shell completion support in mise-completions-sync.
 | [flux2](https://github.com/fluxcd/flux2) | Open and extensible continuous delivery solutio... | ✓ | ✓ | ✓ |
 | [flyctl](https://github.com/superfly/flyctl) | Command line tools for fly.io services | ✓ | ✓ | ✓ |
 | fnox | Fort Knox for your secrets | ✓ | ✓ | ✓ |
+| forgejo-cli |  | ✓ | ✓ | ✓ |
 | [fx](https://github.com/antonmedv/fx) | Command-line tool and terminal JSON viewer | ✓ | ✓ | ✓ |
 | [gh](https://github.com/cli/cli) | GitHub’s official command line tool | ✓ | ✓ | ✓ |
 | [ghorg](https://github.com/gabrie30/ghorg) | Quickly clone an entire org/users repositories ... | ✓ | ✓ | ✓ |
@@ -43,6 +45,7 @@ The following tools have shell completion support in mise-completions-sync.
 | [helm](https://github.com/helm/helm) | The Kubernetes Package Manager | ✓ | ✓ | ✓ |
 | hishtory | Your shell history: synced, queryable, and in c... | ✓ | ✓ | ✓ |
 | [hk](https://github.com/jdx/hk) | git hook and pre-commit lint manager | ✓ | ✓ | ✓ |
+| hubble |  | ✓ | ✓ | ✓ |
 | [hugo](https://github.com/gohugoio/hugo) | The world’s fastest framework for building webs... | ✓ | ✓ | ✓ |
 | [hyperfine](https://github.com/sharkdp/hyperfine) | A command-line benchmarking tool | ✓ | ✓ | ✓ |
 | ipython |  | ✓ | ✓ | ✓ |
@@ -69,6 +72,7 @@ The following tools have shell completion support in mise-completions-sync.
 | mise-completions-sync |  | ✓ | ✓ | ✓ |
 | [nerdctl](https://github.com/containerd/nerdctl) | contaiNERD CTL - Docker-compatible CLI for cont... | ✓ | ✓ | ✓ |
 | nix |  | ✓ | ✓ | ✓ |
+| [nova](https://github.com/FairwindsOps/nova) | Find outdated or deprecated Helm charts running... | ✓ | ✓ | ✓ |
 | [npm](https://github.com/npm/cli) | the package manager for JavaScript | ✓ | ✓ |  |
 | oc | OpenShift Client CLI (oc) | ✓ | ✓ | ✓ |
 | oci | Oracle Cloud Infrastructure CLI | ✓ | ✓ | ✓ |
@@ -105,8 +109,14 @@ The following tools have shell completion support in mise-completions-sync.
 | [syft](https://github.com/anchore/syft) | CLI tool and library for generating a Software ... | ✓ | ✓ | ✓ |
 | [talosctl](https://github.com/siderolabs/talos) | Talos is a modern OS for Kubernetes. talosctl i... | ✓ | ✓ | ✓ |
 | [task](https://github.com/go-task/task) | A task runner / simpler Make alternative writte... | ✓ | ✓ | ✓ |
+| [tealdeer](https://github.com/tealdeer-rs/tealdeer) | A very fast implementation of tldr in Rust. | ✓ | ✓ | ✓ |
 | [television](https://github.com/alexpasmantier/television) | The revolution will (not) be televised | ✓ | ✓ | ✓ |
 | [tilt](https://github.com/tilt-dev/tilt) | Define your dev environment as code. For micros... | ✓ | ✓ | ✓ |
+| [trash](https://github.com/andreafrancia/trash-cli) | Put files in trash | ✓ | ✓ |  |
+| [trash-empty](https://github.com/andreafrancia/trash-cli) | Empty trash | ✓ | ✓ |  |
+| [trash-list](https://github.com/andreafrancia/trash-cli) | List trashed files | ✓ | ✓ |  |
+| [trash-put](https://github.com/andreafrancia/trash-cli) | Put files in trash | ✓ | ✓ |  |
+| [trash-restore](https://github.com/andreafrancia/trash-cli) | Restore trashed file | ✓ | ✓ |  |
 | [tree-sitter](https://github.com/tree-sitter/tree-sitter) | An incremental parsing system for programming t... | ✓ | ✓ | ✓ |
 | [trivy](https://github.com/aquasecurity/trivy) | Find vulnerabilities, misconfigurations, secret... | ✓ | ✓ | ✓ |
 | [ty](https://github.com/astral-sh/ty) | An extremely fast Python type checker and langu... | ✓ | ✓ | ✓ |
@@ -117,10 +127,12 @@ The following tools have shell completion support in mise-completions-sync.
 | [watchexec](https://github.com/watchexec/watchexec) | Executes commands in response to file modificat... | ✓ | ✓ | ✓ |
 | whosthere |  | ✓ | ✓ | ✓ |
 | [xh](https://github.com/ducaale/xh) | Friendly and fast tool for sending HTTP requests | ✓ | ✓ | ✓ |
+| ya |  | ✓ | ✓ | ✓ |
+| [yazi](https://github.com/sxyazi/yazi) | Blazing fast terminal file manager written in R... | ✓ | ✓ | ✓ |
 | [yq](https://github.com/mikefarah/yq) | yq is a portable command-line YAML processor | ✓ | ✓ | ✓ |
 | [zellij](https://github.com/zellij-org/zellij) | A terminal workspace with batteries included | ✓ | ✓ | ✓ |
 
-**Total: 115 tools**
+**Total: 127 tools**
 
 ## Shell Support Legend
 
@@ -163,6 +175,27 @@ The file is searched for by name beneath `mise where <tool>`, because the
 directory holding it encodes the version and platform
 (`hyperfine-v1.20.0-x86_64-apple-darwin/autocomplete`) and cannot be
 written down in advance. The shallowest match wins.
+
+### Tools whose binary has a different name
+
+A completion file is only loaded when it is named after the command the
+user types, so an entry keyed on a mise tool name that differs from its
+binary has to say so with `completion_name`. `television` installs `tv`:
+
+```toml
+television = { completion_name = "tv", zsh = "tv init zsh", bash = "tv init bash", fish = "tv init fish" }
+```
+
+Bundled entries need it too — `tealdeer` installs the `tldr` command:
+
+```toml
+tealdeer = { completion_name = "tldr", bundled = true, zsh = "zsh_tealdeer", bash = "bash_tealdeer", fish = "fish_tealdeer" }
+```
+
+Two entries may share one `completion_name` when the same binary is
+reachable under two mise tool names, as `rg` and `ripgrep` are. They write
+the same file, and `clean` keeps it while either one is installed.
+
 ### Companion binaries
 
 Some mise tools install additional binaries that generate their own completions.

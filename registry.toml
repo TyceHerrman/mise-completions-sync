@@ -29,6 +29,11 @@ glab = "gh_style"
 # Kubernetes ecosystem
 clusterctl = "standard"
 cmctl = "standard"
+# mise's registry lists this as cilium-hubble, but installing the aqua backend
+# directly (aqua:cilium/hubble) strips to hubble, so both keys are listed --
+# same idea as rg/ripgrep below. The binary is named hubble either way.
+cilium-hubble = { completion_name = "hubble", zsh = "hubble completion zsh", bash = "hubble completion bash", fish = "hubble completion fish" }
+hubble = "standard"
 k9s = "standard"
 kind = "standard"
 kubectl-ai = "standard"
@@ -40,6 +45,7 @@ k3d = "standard"
 ko = "standard"
 kubeseal = { audit_skip = "needs a reachable cluster config even to print completions", zsh = "kubeseal completion zsh", bash = "kubeseal completion bash", fish = "kubeseal completion fish" }
 linkerd = "standard"
+nova = "standard"
 skaffold = "standard"
 stern = "standard"
 talosctl = "standard"
@@ -104,7 +110,7 @@ grafanactl = "standard"
 # work (asdf:asdf-community/asdf-hishtory) strips to a different short name, so
 # both keys are listed -- same idea as rg/ripgrep below.
 hishtory = "standard"
-asdf-hishtory = { zsh = "hishtory completion zsh", bash = "hishtory completion bash", fish = "hishtory completion fish" }
+asdf-hishtory = { completion_name = "hishtory", zsh = "hishtory completion zsh", bash = "hishtory completion bash", fish = "hishtory completion fish" }
 hugo = "standard"
 jules = "standard"
 lazygit = "standard"
@@ -128,12 +134,15 @@ whosthere = "standard"
 
 # mise installs this tool as github:alltuner/mise-completions-sync (stripped to "mise-completions-sync"),
 # but the binary it provides is named misecompsync.
-mise-completions-sync = { zsh = "misecompsync completion zsh", bash = "misecompsync completion bash", fish = "misecompsync completion fish" }
+mise-completions-sync = { completion_name = "misecompsync", zsh = "misecompsync completion zsh", bash = "misecompsync completion bash", fish = "misecompsync completion fish" }
+
+# not in mise's registry; install as cargo:forgejo-cli. The binary is named fj.
+forgejo-cli = { completion_name = "fj", zsh = "fj completion zsh", bash = "fj completion bash", fish = "fj completion fish" }
 
 bun = { zsh = "bun completions", bash = "bun completions", fish = "bun completions" }
 
 # mise installs this tool as flux2, but the binary it provides is named flux.
-flux2 = { zsh = "flux completion zsh", bash = "flux completion bash", fish = "flux completion fish" }
+flux2 = { completion_name = "flux", zsh = "flux completion zsh", bash = "flux completion bash", fish = "flux completion fish" }
 
 # Partial shell support (zsh + bash)
 npm = { zsh = "npm completion", bash = "npm completion" }
@@ -161,6 +170,9 @@ prek = { zsh = "prek util generate-shell-completion zsh", bash = "prek util gene
 # them. The per-shell value is the filename to look for, not a command.
 hyperfine = { bundled = true, zsh = "_hyperfine", bash = "hyperfine.bash", fish = "hyperfine.fish" }
 killport = { bundled = true, zsh = "_killport", bash = "killport.bash", fish = "killport.fish" }
+tealdeer = { completion_name = "tldr", bundled = true, zsh = "zsh_tealdeer", bash = "bash_tealdeer", fish = "fish_tealdeer" }
+yazi = { bundled = true, zsh = "_yazi", bash = "yazi.bash", fish = "yazi.fish" }
+ya = { provided_by = "yazi", bundled = true, zsh = "_ya", bash = "ya.bash", fish = "ya.fish" }
 
 # Unique command patterns
 task = { zsh = "task --completion zsh", bash = "task --completion bash", fish = "task --completion fish" }
@@ -168,11 +180,11 @@ bat = { zsh = "bat --completion zsh", bash = "bat --completion bash", fish = "ba
 fd = { zsh = "fd --gen-completions zsh", bash = "fd --gen-completions bash", fish = "fd --gen-completions fish" }
 delta = { zsh = "delta --generate-completion zsh", bash = "delta --generate-completion bash", fish = "delta --generate-completion fish" }
 zellij = { zsh = "zellij setup --generate-completion zsh", bash = "zellij setup --generate-completion bash", fish = "zellij setup --generate-completion fish" }
-scaleway-cli = { zsh = "scw autocomplete script shell=zsh", bash = "scw autocomplete script shell=bash", fish = "scw autocomplete script shell=fish" }
+scaleway-cli = { completion_name = "scw", zsh = "scw autocomplete script shell=zsh", bash = "scw autocomplete script shell=bash", fish = "scw autocomplete script shell=fish" }
 
 # rg has unique --generate complete-{shell} pattern
 rg = { zsh = "rg --generate complete-zsh", bash = "rg --generate complete-bash", fish = "rg --generate complete-fish" }
-ripgrep = { zsh = "rg --generate complete-zsh", bash = "rg --generate complete-bash", fish = "rg --generate complete-fish" }
+ripgrep = { completion_name = "rg", zsh = "rg --generate complete-zsh", bash = "rg --generate complete-bash", fish = "rg --generate complete-fish" }
 
 # nix needs extra experimental features flag
 nix = { zsh = "nix --extra-experimental-features 'nix-command' completion zsh 2>/dev/null || true", bash = "nix --extra-experimental-features 'nix-command' completion bash 2>/dev/null || true", fish = "nix --extra-experimental-features 'nix-command' completion fish 2>/dev/null || true" }
@@ -200,5 +212,11 @@ fx = { zsh = "fx --comp zsh", bash = "fx --comp bash", fish = "fx --comp fish" }
 pkl = { zsh = "pkl shell-completion zsh", bash = "pkl shell-completion bash", fish = "pkl shell-completion fish" }
 
 # television provides the `tv` binary and requires init <shell>
-television = { zsh = "tv init zsh", bash = "tv init bash", fish = "tv init fish" }
+television = { completion_name = "tv", zsh = "tv init zsh", bash = "tv init bash", fish = "tv init fish" }
 
+# trash-cli requires --print-completion
+trash = { provided_by = "trash-cli", zsh = "trash --print-completion zsh", bash = "trash --print-completion bash" }
+trash-empty = { provided_by = "trash-cli", zsh = "trash-empty --print-completion zsh", bash = "trash-empty --print-completion bash" }
+trash-list = { provided_by = "trash-cli", zsh = "trash-list --print-completion zsh", bash = "trash-list --print-completion bash" }
+trash-restore = { provided_by = "trash-cli", zsh = "trash-restore --print-completion zsh", bash = "trash-restore --print-completion bash" }
+trash-put = { provided_by = "trash-cli", zsh = "trash-put --print-completion zsh", bash = "trash-put --print-completion bash" }

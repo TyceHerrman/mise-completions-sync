@@ -321,6 +321,14 @@ fn validate_completion_output(tool_name: &str, stdout: &[u8]) -> Result<(), Erro
     Ok(())
 }
 
+fn completion_output_name<'a>(tool_name: &'a str, entry: &'a registry::ToolEntry) -> &'a str {
+    entry
+        .completions
+        .completion_name
+        .as_deref()
+        .unwrap_or(tool_name)
+}
+
 #[derive(Debug, PartialEq, Eq)]
 struct SyncTarget {
     tool_name: String,
@@ -436,6 +444,7 @@ fn tool_install_dir(tool_id: &str) -> Result<PathBuf, Error> {
 fn install_bundled_completion(
     tool_id: &str,
     tool_name: &str,
+    entry: &registry::ToolEntry,
     filename: &str,
     shell: &str,
     output_dir: &PathBuf,
@@ -461,7 +470,7 @@ fn install_bundled_completion(
         ));
     }
 
-    let target = shells::completion_filename(shell, tool_name);
+    let target = shells::completion_filename(shell, completion_output_name(tool_name, entry));
     let filepath = output_dir.join(&target);
     std::fs::write(&filepath, &contents).map_err(|e| Error::WriteFile(filepath.clone(), e))?;
 
@@ -472,6 +481,7 @@ fn install_bundled_completion(
 fn generate_completion(
     tool_id: &str,   // Original ID with backend prefix (for mise x)
     tool_name: &str, // Stripped name (for filename)
+    entry: &registry::ToolEntry,
     command: &str,
     requires: Option<&str>,
     shell: &str,
@@ -498,8 +508,8 @@ fn generate_completion(
     // A zero exit code is not enough: a wrong command can exit 0 with no output.
     validate_completion_output(tool_name, &output.stdout)?;
 
-    // Write the completion file using the stripped name (not the original ID)
-    let filename = shells::completion_filename(shell, tool_name);
+    // Write the completion file using the registry name unless an override is set.
+    let filename = shells::completion_filename(shell, completion_output_name(tool_name, entry));
     let filepath = output_dir.join(&filename);
 
     std::fs::write(&filepath, &output.stdout).map_err(|e| Error::WriteFile(filepath.clone(), e))?;
@@ -561,6 +571,7 @@ pub fn sync_completions(
                         install_bundled_completion(
                             &target.tool_id,
                             &target.tool_name,
+                            entry,
                             value,
                             shell,
                             &output_dir,
@@ -569,6 +580,7 @@ pub fn sync_completions(
                         generate_completion(
                             &target.tool_id,
                             &target.tool_name,
+                            entry,
                             value,
                             entry.completions.requires.as_deref(),
                             shell,
@@ -587,10 +599,28 @@ pub fn sync_completions(
     Ok(())
 }
 
+/// Group registry entries by the name their completion files are written under.
+///
+/// Several entries can share one name: `rg` and `ripgrep` are the same binary
+/// reached through two mise tool names, and both write `_rg`.
+fn entries_by_completion_name(
+    registry: &registry::Registry,
+) -> std::collections::HashMap<&str, Vec<(&String, &registry::ToolEntry)>> {
+    let mut by_name: std::collections::HashMap<&str, Vec<_>> = std::collections::HashMap::new();
+    for (tool_name, entry) in &registry.tools {
+        by_name
+            .entry(completion_output_name(tool_name, entry))
+            .or_default()
+            .push((tool_name, entry));
+    }
+    by_name
+}
+
 /// Remove completions for tools that are no longer installed
 pub fn clean_stale_completions(dirs: &CompletionsDirs, flags: MiseLsFlags) -> Result<(), Error> {
     let registry = registry::load_registry()?;
     let installed_map = get_installed_tools(flags)?;
+    let writers = entries_by_completion_name(&registry);
 
     let shells = ["zsh", "bash", "fish"];
     let mut removed = 0;
@@ -609,11 +639,13 @@ pub fn clean_stale_completions(dirs: &CompletionsDirs, flags: MiseLsFlags) -> Re
                 // Extract tool name from filename
                 let tool = shells::tool_from_filename(shell, filename);
                 if let Some(tool) = tool {
-                    if registry
-                        .tools
-                        .get(&tool)
-                        .is_some_and(|entry| !is_tool_installed(&tool, entry, &installed_map))
-                        && std::fs::remove_file(&path).is_ok()
+                    // The file belongs to every entry that would write it, so it
+                    // is stale only once none of them is installed.
+                    if writers.get(tool.as_str()).is_some_and(|entries| {
+                        entries
+                            .iter()
+                            .all(|(name, entry)| !is_tool_installed(name, entry, &installed_map))
+                    }) && std::fs::remove_file(&path).is_ok()
                     {
                         println!("Removed: {}", path.display());
                         removed += 1;
@@ -694,6 +726,7 @@ mod tests {
                 zsh: Some("completion zsh".to_string()),
                 bash: None,
                 fish: None,
+                completion_name: None,
                 requires: None,
                 bundled: None,
             },
@@ -1140,5 +1173,69 @@ mod tests {
         assert!(is_tool_installed("uv", uv, &installed));
         assert!(is_tool_installed("uvx", uvx, &installed));
         assert!(!is_tool_installed("uvx", uvx, &HashMap::new()));
+    }
+
+    fn entry_named(completion_name: Option<&str>) -> registry::ToolEntry {
+        registry::ToolEntry {
+            completions: registry::ToolCompletions {
+                zsh: Some("completion zsh".to_string()),
+                bash: None,
+                fish: None,
+                completion_name: completion_name.map(str::to_string),
+                requires: None,
+                bundled: None,
+            },
+            provided_by: None,
+        }
+    }
+
+    #[test]
+    fn test_completion_name_decides_where_an_entry_is_grouped() {
+        let registry = registry::Registry {
+            tools: HashMap::from([("television".to_string(), entry_named(Some("tv")))]),
+        };
+
+        let by_name = entries_by_completion_name(&registry);
+        assert!(by_name.contains_key("tv"));
+        assert!(!by_name.contains_key("television"));
+    }
+
+    #[test]
+    fn test_entries_sharing_a_completion_name_are_grouped_together() {
+        // rg and ripgrep are the same binary under two mise tool names.
+        let registry = registry::Registry {
+            tools: HashMap::from([
+                ("rg".to_string(), entry_named(None)),
+                ("ripgrep".to_string(), entry_named(Some("rg"))),
+            ]),
+        };
+
+        let by_name = entries_by_completion_name(&registry);
+        let mut writers: Vec<_> = by_name["rg"]
+            .iter()
+            .map(|(name, _)| name.as_str())
+            .collect();
+        writers.sort_unstable();
+        assert_eq!(writers, ["rg", "ripgrep"]);
+    }
+
+    #[test]
+    fn test_a_shared_completion_file_is_stale_only_when_no_writer_is_installed() {
+        let registry = registry::Registry {
+            tools: HashMap::from([
+                ("rg".to_string(), entry_named(None)),
+                ("ripgrep".to_string(), entry_named(Some("rg"))),
+            ]),
+        };
+        let by_name = entries_by_completion_name(&registry);
+        let stale = |installed: &HashMap<String, String>| {
+            by_name["rg"]
+                .iter()
+                .all(|(name, entry)| !is_tool_installed(name, entry, installed))
+        };
+
+        let via_ripgrep = HashMap::from([("ripgrep".to_string(), "ripgrep".to_string())]);
+        assert!(!stale(&via_ripgrep));
+        assert!(stale(&HashMap::new()));
     }
 }
